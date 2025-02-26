@@ -1,6 +1,6 @@
 import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { removeItem, incrementQuantity, decrementQuantity } from './CartSlice';
+import { removeItem, updateQuantity } from './CartSlice';
 import './CartItem.css';
 
 const CartItem = ({ onContinueShopping }) => {
@@ -9,7 +9,9 @@ const CartItem = ({ onContinueShopping }) => {
 
   // Calculate the total amount for all products in the cart
   const calculateTotalAmount = () => {
-    return cart.reduce((total, item) => total + item.cost * item.quantity, 0).toFixed(2); // Sum up total price for all items
+    return cart
+      .reduce((total, item) => total + parseFloat(item.cost.substring(1)) * item.quantity, 0) // Sum up total price for all items
+      .toFixed(2); // Return total cost rounded to 2 decimal places
   };
 
   // Handle continue shopping button click
@@ -19,13 +21,15 @@ const CartItem = ({ onContinueShopping }) => {
 
   // Handle increment of item quantity
   const handleIncrement = (item) => {
-    dispatch(incrementQuantity(item.name)); // Dispatch action to increment item quantity in Redux store
+    dispatch(updateQuantity({ name: item.name, quantity: item.quantity + 1 })); // Dispatch action to increment item quantity in Redux store
   };
 
   // Handle decrement of item quantity
   const handleDecrement = (item) => {
     if (item.quantity > 1) {
-      dispatch(decrementQuantity(item.name)); // Dispatch action to decrement item quantity in Redux store
+      dispatch(updateQuantity({ name: item.name, quantity: item.quantity - 1 })); // Dispatch action to decrement item quantity
+    } else {
+      dispatch(removeItem(item.name)); // If quantity drops to 0, remove the item from the cart
     }
   };
 
@@ -36,7 +40,12 @@ const CartItem = ({ onContinueShopping }) => {
 
   // Calculate total cost for each item (item cost * quantity)
   const calculateTotalCost = (item) => {
-    return (item.cost * item.quantity).toFixed(2); // Multiply cost by quantity and round to 2 decimal places
+    return (parseFloat(item.cost.substring(1)) * item.quantity).toFixed(2); // Multiply cost by quantity and round to 2 decimal places
+  };
+
+  // Placeholder for Checkout functionality
+  const handleCheckoutShopping = () => {
+    alert('Functionality to be added for future reference'); // Alert for future checkout functionality
   };
 
   return (
@@ -64,7 +73,7 @@ const CartItem = ({ onContinueShopping }) => {
       <div className="continue_shopping_btn">
         <button className="get-started-button" onClick={handleContinueShopping}>Continue Shopping</button>
         <br />
-        <button className="get-started-button1">Checkout</button>
+        <button className="get-started-button1" onClick={handleCheckoutShopping}>Checkout</button>
       </div>
     </div>
   );
