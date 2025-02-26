@@ -1,12 +1,15 @@
 import React, { useState } from 'react';
+import { useDispatch } from 'react-redux';
+import { addItem } from './CartSlice'; // Import addItem from CartSlice
 import './ProductList.css';
-import CartItem from './CartItem';
 
 function ProductList() {
     const [showCart, setShowCart] = useState(false);
-    const [cartItems, setCartItems] = useState([]); // State to hold cart items
+    const [cartItems, setCartItems] = useState([]);
+    const [addedToCart, setAddedToCart] = useState({}); // Track added items
+    const dispatch = useDispatch();  // Redux dispatch function
 
-    // List of plants
+    // List of plants (as before)
     const plantsArray = [
         {
             category: "Air Purifying Plants",
@@ -23,7 +26,12 @@ function ProductList() {
                     description: "Filters formaldehyde and xylene from the air.",
                     cost: "$12"
                 },
-                // Add more plants here
+                {
+                    name: "Peace Lily",
+                    image: "https://cdn.pixabay.com/photo/2020/02/10/16/43/peace-lily-4823622_1280.jpg",
+                    description: "Known for its air-purifying and decorative properties.",
+                    cost: "$20"
+                },
             ]
         },
         {
@@ -35,23 +43,60 @@ function ProductList() {
                     description: "Calming scent, used in aromatherapy.",
                     cost: "$20"
                 },
-                // Add more plants here
+                {
+                    name: "Rosemary",
+                    image: "https://cdn.pixabay.com/photo/2017/06/10/16/11/rosemary-2395595_1280.jpg",
+                    description: "A fragrant herb used in cooking and aromatherapy.",
+                    cost: "$18"
+                },
+                {
+                    name: "Jasmine",
+                    image: "https://cdn.pixabay.com/photo/2018/07/04/15/18/jasmine-3519744_1280.jpg",
+                    description: "Known for its sweet fragrance and beautiful flowers.",
+                    cost: "$25"
+                }
             ]
         },
-        // More categories here
+        {
+            category: "Succulent Plants",
+            plants: [
+                {
+                    name: "Aloe Vera",
+                    image: "https://cdn.pixabay.com/photo/2017/06/10/16/11/aloe-vera-2395599_1280.jpg",
+                    description: "A medicinal plant used to treat skin conditions.",
+                    cost: "$10"
+                },
+                {
+                    name: "Cactus",
+                    image: "https://cdn.pixabay.com/photo/2017/07/07/03/43/cactus-2484640_1280.jpg",
+                    description: "A hardy plant known for its ability to survive in dry environments.",
+                    cost: "$12"
+                },
+                {
+                    name: "Echeveria",
+                    image: "https://cdn.pixabay.com/photo/2018/06/01/13/06/echeveria-3452190_1280.jpg",
+                    description: "A beautiful rosette-shaped succulent plant.",
+                    cost: "$15"
+                }
+            ]
+        }
     ];
 
     // Function to handle adding items to the cart
     const handleAddToCart = (plant) => {
-        setCartItems((prevItems) => [...prevItems, plant]);
+        dispatch(addItem(plant));  // Dispatch to Redux store
+        setAddedToCart((prevState) => ({
+            ...prevState,
+            [plant.name]: true  // Mark plant as added
+        }));
     };
 
-    // Function to toggle cart visibility
+    // Toggle cart visibility
     const handleCartClick = () => {
         setShowCart(!showCart);
     };
 
-    // Function to continue shopping (hide cart and show products)
+    // Continue shopping (hide cart)
     const handleContinueShopping = () => {
         setShowCart(false);
     };
@@ -68,7 +113,7 @@ function ProductList() {
                         </div>
                     </a>
                 </div>
-                <div className="navbar-links">
+                <div className="product-grid">
                     <a href="#" onClick={handleCartClick} style={{ color: 'white', fontSize: '30px' }}>
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" height="68" width="68">
                             <circle cx="80" cy="216" r="12" />
@@ -91,7 +136,11 @@ function ProductList() {
                                         <h3>{plant.name}</h3>
                                         <p>{plant.description}</p>
                                         <p>{plant.cost}</p>
-                                        <button onClick={() => handleAddToCart(plant)}>Add to Cart</button>
+                                        {addedToCart[plant.name] ? (
+                                            <button disabled>Added to Cart</button>  // Disable button after adding
+                                        ) : (
+                                            <button onClick={() => handleAddToCart(plant)}>Add to Cart</button>
+                                        )}
                                     </div>
                                 ))}
                             </div>
