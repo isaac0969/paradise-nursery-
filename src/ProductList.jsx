@@ -1,13 +1,16 @@
 import React, { useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { addItem } from './CartSlice'; // Import addItem from CartSlice
+import CartItem from './CartItem'; // Import CartItem component
 import './ProductList.css';
 
 function ProductList() {
     const [showCart, setShowCart] = useState(false);
-    const [cartItems, setCartItems] = useState([]);
     const [addedToCart, setAddedToCart] = useState({}); // Track added items
     const dispatch = useDispatch();  // Redux dispatch function
+
+    // Get cart items from Redux store
+    const cartItems = useSelector(state => state.cart.items);
 
     // List of plants (as before)
     const plantsArray = [
