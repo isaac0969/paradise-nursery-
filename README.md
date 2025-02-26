@@ -19,4 +19,4 @@ This is a React-based shopping cart application where users can browse and purch
    First, clone the repository to your local machine.
 
    ```bash
-   git clone https://github.com/<isaac0969>/paradise-nursery.git
+   git clone https://github.com/isaac0969/paradise-nursery-.git
